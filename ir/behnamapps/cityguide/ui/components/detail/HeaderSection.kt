@@ -41,164 +41,181 @@ fun HeaderSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
-        // عنوان بزرگ (Instagram-style)
+        // عنوان (Google Maps style)
         Text(
             text = name,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // دسته‌بندی به صورت متنی ساده
-        if (categories.isNotEmpty()) {
-            val categoryText = categories.joinToString(" · ") { it.name }
-            Text(
-                text = categoryText,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        // نام مخاطب
-        contactPersonName?.let {
-            Spacer(modifier = Modifier.height(2.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.then(
-                    if (userId != null) {
-                        Modifier.clickable { onContactPersonClick(userId) }
-                    } else {
-                        Modifier
-                    }
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-
-        // تگ‌ها
-        if (tags.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            val tagText = tags.take(5).joinToString(" ") { "#${it.name}" } +
-                    if (tags.size > 5) " +${tags.size - 5}" else ""
-            Text(
-                text = tagText,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // دکمه‌های اکشن (Instagram-style: تماس + ذخیره کنار هم)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // دسته‌بندی و تگ‌ها در یک LazyRow
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // دکمه تماس
-            if (primaryPhone != null) {
-                Button(
-                    onClick = { onCallClick?.invoke() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(42.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Call,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "تماس",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+            // دسته‌بندی اول
+            if (categories.isNotEmpty()) {
+                item {
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.LocalOffer,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = categories.first().name,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
                 }
             }
 
-            // دکمه بوکمارک
-            OutlinedButton(
+            // نام مخاطب
+            if (contactPersonName != null) {
+                item {
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.then(
+                            if (userId != null) {
+                                Modifier.clickable { onContactPersonClick(userId) }
+                            } else {
+                                Modifier
+                            }
+                        )
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Person,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = contactPersonName,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
+            // تگ‌ها (فقط 2 تا)
+            items(tags.take(2)) { tag ->
+                Surface(
+                    shape = RoundedCornerShape(4.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                ) {
+                    Text(
+                        text = "#${tag.name}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // دکمه‌های اکشن (Google Maps style: آیکون بالا + متن پایین)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // دکمه تماس
+            if (primaryPhone != null) {
+                Surface(
+                    onClick = { onCallClick?.invoke() },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(vertical = 10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Call,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "تماس",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            }
+
+            // دکمه ذخیره
+            Surface(
                 onClick = {
                     isBookmarked = !isBookmarked
                     onBookmarkClick?.invoke()
                 },
-                modifier = Modifier
-                    .then(
-                        if (primaryPhone == null) {
-                            Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                color = if (isBookmarked) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isBookmarked) {
+                            Icons.Filled.Bookmark
                         } else {
-                            Modifier.width(90.dp)
+                            Icons.Filled.BookmarkBorder
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = if (isBookmarked) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
                         }
                     )
-                    .height(42.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if (isBookmarked) {
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
-                    } else {
-                        MaterialTheme.colorScheme.surface
-                    },
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    if (isBookmarked) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-                    }
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Icon(
-                    imageVector = if (isBookmarked) {
-                        Icons.Filled.Bookmark
-                    } else {
-                        Icons.Filled.BookmarkBorder
-                    },
-                    contentDescription = "ذخیره",
-                    tint = if (isBookmarked) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                    modifier = Modifier.size(20.dp)
-                )
-                if (primaryPhone == null) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = if (isBookmarked) "ذخیره شد" else "ذخیره",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isBookmarked) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 }
             }
