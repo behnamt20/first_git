@@ -19,35 +19,6 @@ import androidx.compose.ui.unit.dp
 import ir.behnamapps.cityguide.data.remote.dto.ContactDto
 
 @Composable
-fun DetailSectionCard(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Surface(
-            shape = RoundedCornerShape(12.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-        ) {
-            Box(modifier = Modifier.padding(12.dp)) {
-                content()
-            }
-        }
-    }
-}
-
-@Composable
 fun DescriptionSection(description: String?) {
     if (!description.isNullOrBlank()) {
         DetailSectionCard(title = "درباره ما") {
