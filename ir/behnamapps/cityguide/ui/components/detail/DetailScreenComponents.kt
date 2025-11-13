@@ -62,25 +62,39 @@ fun ContactSection(primaryPhone: String?, contacts: List<ContactDto>) {
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            // شماره اصلی
-            primaryPhone?.let {
-                ContactItem(
-                    department = "شماره اصلی",
-                    phone = it,
-                    isPrimary = true
-                )
-            }
+        // کانتینر اصلی دور همه شماره‌ها
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        ) {
+            Column(
+                modifier = Modifier.padding(12.dp)
+            ) {
+                // شماره اصلی
+                primaryPhone?.let {
+                    ContactItem(
+                        department = "شماره اصلی",
+                        phone = it,
+                        isPrimary = true
+                    )
+                }
 
-            // سایر شماره‌ها
-            contacts.forEach { contact ->
-                ContactItem(
-                    department = contact.departmentName,
-                    phone = contact.phoneNumber,
-                    isPrimary = false
-                )
+                // سایر شماره‌ها
+                contacts.forEachIndexed { index, contact ->
+                    if (primaryPhone != null || index > 0) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                    }
+                    ContactItem(
+                        department = contact.departmentName,
+                        phone = contact.phoneNumber,
+                        isPrimary = false
+                    )
+                }
             }
         }
     }
@@ -92,66 +106,61 @@ fun ContactItem(
     phone: String,
     isPrimary: Boolean = false
 ) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = if (isPrimary) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-        } else {
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-        }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // اطلاعات تماس
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = department,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = phone,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            // دکمه تماس
-            Surface(
-                onClick = { /* TODO: Call Intent */ },
-                shape = CircleShape,
+        // اطلاعات تماس
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = department,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (isPrimary) FontWeight.Bold else FontWeight.SemiBold,
                 color = if (isPrimary) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.secondaryContainer
+                    MaterialTheme.colorScheme.onSurface
                 }
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = phone,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // دکمه تماس
+        Surface(
+            onClick = { /* TODO: Call Intent */ },
+            shape = CircleShape,
+            color = if (isPrimary) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.secondaryContainer
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Call,
-                        contentDescription = "تماس با $department",
-                        modifier = Modifier.size(20.dp),
-                        tint = if (isPrimary) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSecondaryContainer
-                        }
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Call,
+                    contentDescription = "تماس با $department",
+                    modifier = Modifier.size(20.dp),
+                    tint = if (isPrimary) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    }
+                )
             }
         }
     }
