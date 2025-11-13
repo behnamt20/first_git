@@ -19,82 +19,74 @@ import androidx.compose.ui.unit.dp
 import ir.behnamapps.cityguide.data.remote.dto.ContactDto
 
 @Composable
-fun DescriptionSection(description: String?) {
-    if (!description.isNullOrBlank()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = "درباره ما",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-            ) {
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
-                    modifier = Modifier.padding(12.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ContactSection(primaryPhone: String?, contacts: List<ContactDto>) {
+fun DetailSectionCard(
+    title: String,
+    content: @Composable () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
-            text = "اطلاعات تماس",
+            text = title,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // کانتینر اصلی دور همه شماره‌ها
         Surface(
             shape = RoundedCornerShape(12.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
         ) {
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                // شماره اصلی
-                primaryPhone?.let {
-                    ContactItem(
-                        department = "شماره اصلی",
-                        phone = it,
-                        isPrimary = true
-                    )
-                }
+            Box(modifier = Modifier.padding(12.dp)) {
+                content()
+            }
+        }
+    }
+}
 
-                // سایر شماره‌ها
-                contacts.forEachIndexed { index, contact ->
-                    if (primaryPhone != null || index > 0) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                        )
-                    }
-                    ContactItem(
-                        department = contact.departmentName,
-                        phone = contact.phoneNumber,
-                        isPrimary = false
+@Composable
+fun DescriptionSection(description: String?) {
+    if (!description.isNullOrBlank()) {
+        DetailSectionCard(title = "درباره ما") {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+            )
+        }
+    }
+}
+
+@Composable
+fun ContactSection(primaryPhone: String?, contacts: List<ContactDto>) {
+    DetailSectionCard(title = "اطلاعات تماس") {
+        Column {
+            // شماره اصلی
+            primaryPhone?.let {
+                ContactItem(
+                    department = "شماره اصلی",
+                    phone = it,
+                    isPrimary = true
+                )
+            }
+
+            // سایر شماره‌ها
+            contacts.forEachIndexed { index, contact ->
+                if (primaryPhone != null || index > 0) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                 }
+                ContactItem(
+                    department = contact.departmentName,
+                    phone = contact.phoneNumber,
+                    isPrimary = false
+                )
             }
         }
     }
