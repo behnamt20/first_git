@@ -2,7 +2,9 @@ package ir.behnamapps.cityguide.ui.components.detail
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -115,7 +117,9 @@ private fun AttachmentTabs(
     onTabSelected: (AttachmentType) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         availableTabs.forEach { type ->
@@ -124,8 +128,7 @@ private fun AttachmentTabs(
                 type = type,
                 count = count,
                 isSelected = selectedTab == type,
-                onClick = { onTabSelected(type) },
-                modifier = Modifier.weight(1f)
+                onClick = { onTabSelected(type) }
             )
         }
     }
@@ -136,8 +139,7 @@ private fun AttachmentTab(
     type: AttachmentType,
     count: Int,
     isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Surface(
         onClick = onClick,
@@ -146,8 +148,7 @@ private fun AttachmentTab(
             MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
         } else {
             MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        },
-        modifier = modifier
+        }
     ) {
         Row(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 10.dp),
