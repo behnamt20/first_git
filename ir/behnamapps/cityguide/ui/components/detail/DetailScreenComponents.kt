@@ -26,7 +26,8 @@ fun DescriptionSection(description: String?) {
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
